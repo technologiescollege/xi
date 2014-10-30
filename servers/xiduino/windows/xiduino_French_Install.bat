@@ -1,10 +1,13 @@
 cls
 @echo off
-echo XiDuino pour Windows : script d'installation automatique
+echo 		XiDuino pour Windows : script d'installation automatique
 IF DEFINED PUBLIC (SET UDESKTOP=%userprofile%\Desktop) & (SET USTARTMENU=%AppData%\Microsoft\Windows\Start Menu\Programs) & (SET UDOCS=%userprofile%\Documents) ELSE (SET UDESKTOP=%userprofile%\Bureau) & (SET USTARTMENU=%userprofile%\Menu D‚marrer\Programmes) & (SET UDOCS=%userprofile%\Mes Documents)
 echo.
 
+echo A tout moment vous pouvez quitter ce script en appuyant sur <Ctrl + C>
+echo.
 pause
+
 
 echo 1. creation d'un dossier Xi dans les dossiers personnels de l'utilisateur
 
@@ -35,7 +38,7 @@ copy Xi_Install_and_Usage_Guide.lnk "%USTARTMENU%"\Xi
 copy Xi4S_Starter_Project.lnk "%USTARTMENU%"\Xi
 pause
 
-echo 3. installation de NODE.js
+echo 4. installation de NODE.js
 set /p VerWin="Sur quelle version de Windows installez-vous ? 32 bits ou 64 bits ? Tapez 32 ou 64 : 
 if %VerWin%==32 GOTO Win32
 if %VerWin%==64 GOTO Win64
@@ -57,7 +60,7 @@ pause
 GOTO Suite
 
 :Suite
-echo 4. installation des modules supplementaires pour NODE.JS
+echo 5. installation des modules supplementaires pour NODE.js
 set PATH=%PATH%;%ProgramFiles%\nodejs\
 call npm -g cache clean
 call npm install --prefix "%userprofile%"\xi node-gyp
