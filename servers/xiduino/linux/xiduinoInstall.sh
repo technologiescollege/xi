@@ -16,7 +16,7 @@ echo "copying xiduino4Snap.sh"
 cp ./xiduino4Snap.sh ~/xiduino/.
 
 echo "copying xiserver.js"
-cp ../../xiserver/xiserver.js ~/xiduino/.
+cp ../../xiserver.js ~/xiduino/.
 
 echo "Installing npm modules for Xiduino"
 echo "loading node-gyp"
