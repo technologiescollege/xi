@@ -35,7 +35,7 @@
 
 new (function () {
     var ext = this;
-    console.log('Xi4s v.001');
+    console.log('Xi4s');
 
     // 0 = no debug
     // 1 = low level debug

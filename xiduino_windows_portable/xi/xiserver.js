@@ -68,7 +68,7 @@ var five = require('johnny-five');
 var board; // a johnny-five 'board'
 
 var serverType = 'ard'; // set by user in command line invocation
-var urlAddr = 'http://scratch.mit.edu';
+var urlAddr = 'http://scratch.mit.edu/editor';
 var debugLevel = 0; // set by user in command line invocation
 var comPort; // communications port for Arduino - allows user to select the com port
 var ipPort = 1234; // ip port number
