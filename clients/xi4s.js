@@ -204,11 +204,11 @@ new (function () {
 
                 // the mode is the value prescribed in block descriptor section
                 switch (mode) {
-                    // set pin to digital input mode
+                    // set pin to entree numerique mode
                     // msg: setDigitalIN - digital service input
-                    case 'Digital Input':
+                    case 'entree numerique':
                         if (debugLevel >= 1)
-                            console.log('pin mode digital input');
+                            console.log('pin mode entree numerique');
                         // build the message to send to the Xi Server
                         // we use the length of the array as the index/device id
                         messageToServer = 'setDigitalIN/' + boardID + '/' + pin + '/' + sensorDataArray.length;
@@ -216,9 +216,9 @@ new (function () {
                         break;
                     // set pin to digital out
                     // msg: setDigitalOUT
-                    case 'Digital Output':
+                    case 'sortie numerique':
                         if (debugLevel >= 1)
-                            console.log('pin mode digital output');
+                            console.log('pin mode sortie numerique');
                         messageToServer = 'setDigitalOUT/' + boardID + '/' + pin;
                         if (debugLevel >= 2)
                             console.log('pinMode Digital Out Msg to server: ' + messageToServer);
@@ -258,7 +258,7 @@ new (function () {
         alert('Board ' + boardID + ' IP address must be set before a board is used');
     };
 
-    // Digital output command block
+    // sortie numerique command block
     ext.digitalWrite = function (board, pin, value) {
         if (debugLevel >= 1) {
             console.log('digitalWrite Board: ' + board + ' Pin ' + pin + ' Value ' + value);
@@ -286,7 +286,7 @@ new (function () {
         // retrieve digital data from sensorDataArray
     ext.getDigitalInputData = function (board, pin) {
         if (debugLevel >= 1)
-            console.log('Digital Input - board: ' + board + ' Pin: ' + pin);
+            console.log('entree numerique - board: ' + board + ' Pin: ' + pin);
         var key = genReporterKey(board, pin, 'd');
         return retrieveReporterData(board, pin, key);
     };
@@ -383,26 +383,26 @@ new (function () {
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['w', 'Board %m.bdNum IPAddress/Port: %s : %s', 'setBoard', '1', 'localhost', '1234' ],
-            [' ', 'Board: %m.bdNum Set Pin %n as %m.pinMode', 'pinMode', '1', '2', 'Digital Input' ],
-            [' ', 'Board: %m.bdNum Digital Write Pin %n = %m.onOff ', 'digitalWrite', '1', '2', 'Off'],
-            [' ', 'Board: %m.bdNum Analog Write(PWM) Pin %n = %n', 'analogWrite', '1', '3', '128'],
+            ['w', 'Carte n° %m.bdNum IPAddress/Port: %s : %s', 'setBoard', '1', 'localhost', '1234' ],
+            [' ', 'Carte n° %m.bdNum Set Pin %n as %m.pinMode', 'pinMode', '1', '2', 'entree numerique' ],
+            [' ', 'Carte n° %m.bdNum Digital Write Pin %n = %m.onOff ', 'digitalWrite', '1', '2', 'Off'],
+            [' ', 'Carte n° %m.bdNum Analog Write(PWM) Pin %n = %n', 'analogWrite', '1', '3', '128'],
             [' ', 'Set Debug Level %m.dbgLevel', 'setDebugLevel', '0'],
-            ['r', 'Board: %m.bdNum Digital Input on Pin %n', 'getDigitalInputData', '1', '2'],
-            ['r', 'Board: %m.bdNum Analog Sensor Input on Pin %n', 'getAnalogSensorData', '1', '2']
+            ['r', 'Carte n° %m.bdNum entree numerique on Pin %n', 'getDigitalInputData', '1', '2'],
+            ['r', 'Carte n° %m.bdNum Analog Sensor Input on Pin %n', 'getAnalogSensorData', '1', '2']
         ],
         menus: {
             bdNum: [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             dbgLevel: ['0', '1', '2'],
             onOff: ['Off', 'On'],
-            pinMode: ['Digital Input', 'Digital Output', 'Analog Sensor Input', 'Analog (PWM) Output']
+            pinMode: ['entree numerique', 'sortie numerique', 'Analog Sensor Input', 'Analog (PWM) Output']
         },
 
-        url: 'http://mryslab.blogspot.com/'
+        url: 'https://github.com/technologiescollege/xi'
     };
 
 
     // Register the extension
-    ScratchExtensions.register('Xi4S_v_001', descriptor, ext);
+    ScratchExtensions.register('Xi4S', descriptor, ext);
 
 })();
