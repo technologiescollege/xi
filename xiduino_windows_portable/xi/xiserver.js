@@ -68,7 +68,7 @@ var five = require('johnny-five');
 var board; // a johnny-five 'board'
 
 var serverType = 'ard'; // set by user in command line invocation
-var urlAddr = 'http://scratch.mit.edu/editor';
+var urlAddr = '';
 var debugLevel = 0; // set by user in command line invocation
 var comPort; // communications port for Arduino - allows user to select the com port
 var ipPort = 1234; // ip port number
@@ -113,7 +113,7 @@ switch (process.argv.length) {
 // create the correct johnny-five board type
 switch (serverType) {
     case 'rpi':
-        console.log('XiPi Server ...');
+        console.log('XiPi Serveur ...');
         var raspi = require('raspi-io');
 
         //noinspection JSCheckFunctionSignatures
@@ -122,7 +122,7 @@ switch (serverType) {
         });
         break;
     case 'bbb':
-        console.log('XiBone Server ...');
+        console.log('XiBone Serveur ...');
         var BeagleBone = require('beaglebone-io');
         //noinspection JSCheckFunctionSignatures
         board = new five.Board({
@@ -132,7 +132,7 @@ switch (serverType) {
     case 'ard':
     default:
         serverType = 'ard';
-        console.log('XiDuino Server ...');
+        console.log('XiDuino Serveur ...');
 
         // for arduino servers the default web browser is automatically opened to the scratch web page
         if (urlAddr !== "null") {
