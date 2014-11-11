@@ -141,7 +141,7 @@ new (function () {
 
         function noServerAlert() {
             alert('Le serveur Xi ne répond pas. Avez-vous exécuté un serveur Xi pour la carte ' +
-            boardID + '? Démarrer un serveur, rechargez cette page et essayez à nouveau.');
+            boardID + '? Démarrez un serveur, rechargez cette page et essayez à nouveau.');
             // we set the board status back to 0
             boardStatus = 0;
         }
@@ -354,7 +354,7 @@ new (function () {
         // check for 4 unique values
         var unique = pinArray.filter(onlyUnique);
         if (unique.length !== 4) {
-            alert("Les valeurs des 4 broches doivent être distinctes.");
+            alert('Les valeurs des 4 broches doivent être distinctes.');
             return;
         }
         var msg = 'fourWireStepperPins/' + board + '/' + pinA + '/' + pinB + '/' + pinC + '/' + pinD + '/' +  stepsPerRev;
@@ -380,7 +380,7 @@ new (function () {
             console.log('stepperDriverPins unique length =  ' + unique.length);
 
         if (unique.length !== 2) {
-            alert("Les valeurs des broches doivent être distinctes.");
+            alert('Les valeurs des broches doivent être distinctes.');
             return;
         }
         var msg = 'stepperDriverPins/' + board + '/' + pinA + '/' + pinB + '/' + stepsPerRev;
