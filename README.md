@@ -7,13 +7,15 @@ Source : [MrYsLab/xi](https://github.com/MrYsLab/xi)
 
 Xi permet de simultanément connecter, contrôler et surveiller plusieurs cartes Arduino, BeagleBone Black et Raspberry Pi par le biais de Scratch 2.0 comme interface graphique globale.
 
-La documentation pour l'installation et l'utilisation de Xi sont fournies dans le dossier "documentations".
+## Version francisée et portable
 
-ATTENTION : celle-ci est en perpétuelle évolution car le créateur de s2a/Xi, Alan Yorinks, continue à faire évoluer ses projets. Bien que parfaitement fonctionnelle, quand une version stable sera en ligne je traduirai sa documentation.
+_La documentation pour l'installation et l'utilisation de Xi sont fournies dans le dossier "documentations"._
 
-### Known Limitations Imposed By The Scratch Team:
-1. Currently Xi only works with the Scratch 2.0 Online editor.
-2. Projects created using Xi cannot be shared on the Scratch cloud.
+**ATTENTION** : celle-ci est en perpétuelle évolution car le créateur de s2a/Xi, Alan Yorinks, continue à faire évoluer ses projets. Bien que parfaitement fonctionnelle, quand une version stable sera en ligne je traduirai sa documentation.
+
+### Limites connues à ce jour imposées par l'équipe de développement de Scratch :
+1. **Xi ne fonctionne que** sur la version en ligne de Scratch2.0
+2. Les projets faits en utilisant Xi ne peuvent pas être sauvegardés sur votre compte en ligne
 
 
 
