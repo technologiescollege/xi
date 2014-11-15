@@ -7,6 +7,7 @@ ou comment inter-connecter nos micro-contrôleurs modernes.
 Xi permet de simultanément connecter, contrôler et surveiller plusieurs cartes Arduino, BeagleBone Black et Raspberry Pi par le biais de Scratch 2.0 comme interface graphique globale.
 
 La documentation pour l'installation et l'utilisation de Xi sont fournies dans le dossier "documentations".
+
 ATTENTION : celle-ci est en perpétuelle évolution car le créateur de s2a/Xi, Alan Yorinks, continue à faire évoluer ses projets. Bien que parfaitement fonctionnelle, quand une version stable sera en ligne je traduirai sa documentation.
 
 ### Known Limitations Imposed By The Scratch Team:
