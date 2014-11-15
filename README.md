@@ -1,13 +1,13 @@
 Xi
 ======
-The Cross-Platform Interconnect
+ou comment inter-connecter nos micro-contrôleurs modernes.
 
 ![ScreenShot](https://raw.github.com/MrYsLab/Xi/master/documentation/XiLogo.png)
 
-Xi allows you to simultaneously connect, monitor and control multiple Arduino, 
-BeagleBone Black and Raspberry Pi boards using Scratch 2.0 as a graphical user interface.
+Xi permet de simultanément connecter, contrôler et surveiller plusieurs cartes Arduino, BeagleBone Black et Raspberry Pi par le biais de Scratch 2.0 comme interface graphique globale.
 
-Installation instructions are provided in the Installation and Usage Guide located in the documentation directory.
+La documentation pour l'installation et l'utilisation de Xi sont fournies dans le dossier "documentations".
+ATTENTION : celle-ci est en perpétuelle évolution car le créateur de s2a/Xi, Alan Yorinks, continue à faire évoluer ses projets. Bien que parfaitement fonctionnelle, quand une version stable sera en ligne je traduirai sa documentation.
 
 ### Known Limitations Imposed By The Scratch Team:
 1. Currently Xi only works with the Scratch 2.0 Online editor.
