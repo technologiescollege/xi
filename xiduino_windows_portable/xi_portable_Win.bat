@@ -1,5 +1,7 @@
 cls
 @echo off
+rem Tous droits réservés Alan Yorinks, créateur de Xi : https://github.com/MrYsLab/xi
+rem Adaptations, traductions et portabilisaion par Sébastien Canet : https://github.com/technologiescollege/xi
 echo.
 echo 		XiDuino : serveur Xi pour interface Arduino.
 echo.
