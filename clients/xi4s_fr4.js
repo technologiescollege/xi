@@ -35,7 +35,7 @@
 
 new (function () {
     var ext = this;
-    console.log('Xi4s v.001');
+    console.log('Xi4s v.004');
 
     // 0 = no debug
     // 1 = low level debug
@@ -111,7 +111,7 @@ new (function () {
             if (webSocketsArray[index].id === boardID) {
                 // allow user to reset the board to the same value - for stop and start
                 if ((webSocketsArray[index].ip != ipAddress) || (webSocketsArray[index].port != port)) {
-                    alert('Une adresse IP a déjà été définie pour la carte ' + boardID + '!');
+                    createAlert(12, boardID);
                     callback(); // release the scratch wait block
                     return; // no need to go further
                 }
@@ -140,9 +140,7 @@ new (function () {
         };
 
         function noServerAlert() {
-            alert('Le serveur Xi ne répond pas. Avez-vous exécuté un serveur Xi pour la carte ' +
-            boardID + '? Démarrez un serveur, rechargez cette page et essayez à nouveau.');
-            // we set the board status back to 0
+            createAlert(20, boardID);
             boardStatus = 0;
         }
 
@@ -180,10 +178,9 @@ new (function () {
 
                 // server detected a problem in setting the mode of this pin
                 case 'invalidSetMode':
-                    alert(msg[1]);
-                    break;
                 case 'invalidPinCommand':
-                    alert(msg[1]);
+                    console.log('invalid alerts:' + 'index: ' + msg[1] + 'board: ' + msg[2] + 'pin: ' + msg[3]);
+                    createAlert(msg[1], msg[2], msg[3]);
                     break;
                 default:
                     if (debugLevel >= 1)
@@ -201,6 +198,7 @@ new (function () {
             if (webSocketsArray[index].id === boardID) {
                 // send message to server to create device(input devices) or set the pin mode (output device)
                 var messageToServer; // message to be sent to server
+                mode = extractMode(mode);
 
                 // the mode is the value prescribed in block descriptor section
                 switch (mode) {
@@ -265,9 +263,7 @@ new (function () {
                         webSocketsArray[index].ws.send(messageToServer);
                         break;
                     case 'SONAR Distance - (Digital In)':
-
-                        alert('Si vous utilisez une carte Arduino, cette fonction nécessite une version spéciale du programme Firmata.' +
-                        'Voir les détails sur : https://github.com/rwaldron/johnny-five/wiki/Sonar');
+                        createAlert(13);
                         messageToServer = 'setSonarMode/' + boardID + '/' + pin + '/' + sensorDataArray.length;
                         if (debugLevel >= 2)
                             console.log('pinMode Sonar Out Msg to server: ' + messageToServer);
@@ -297,7 +293,7 @@ new (function () {
             }
         }
         // board not yet established
-        alert('Pour la carte ' + boardID + ', une adresse IP doit être fournie avant son utilisation.');
+        createAlert(14, boardID)
     };
 
 
@@ -306,6 +302,8 @@ new (function () {
         if (debugLevel >= 1) {
             console.log('digitalWrite Board: ' + board + ' Pin ' + pin + ' Value ' + value);
         }
+        // strip index number off of message to determine value to send to server
+        value = extractOffOn(value);
         var msg = 'digitalWrite/' + board + '/' + pin + '/' + value;
         sendCommand(msg, board, 'digitalWrite');
     };
@@ -318,12 +316,15 @@ new (function () {
 
     // set servo position to position in degrees
     ext.moveStandardServo = function (board, pin, degrees, inversion) {
+        inversion = extractInversion(inversion);
         var msg = 'moveStandardServo/' + board + '/' + pin + '/' + degrees + '/' + inversion;
         sendCommand(msg, board, 'moveStandardServo');
     };
 
     // set servo position to position in degrees
     ext.moveContinuousServo = function (board, pin, direction, inversion, speed) {
+        inversion = extractInversion(inversion);
+        direction = extractDirection(direction);
         var msg = 'moveContinuousServo/' + board + '/' + pin + '/' + direction + '/' + inversion + '/' + speed;
         sendCommand(msg, board, 'moveContinuousServo');
     };
@@ -342,8 +343,7 @@ new (function () {
 
     ext.fourWireStepperPins = function (board, pinA, pinB, pinC, pinD, stepsPerRev) {
 
-        alert('Si vous utilisez une carte Arduino, cette fonction nécessite une version spéciale du programme Firmata.' +
-        'Les détails sur : https://github.com/soundanalogous/AdvancedFirmata');
+        createAlert(15);
 
         var pinArray = [];
         pinArray.push(pinA);
@@ -354,17 +354,16 @@ new (function () {
         // check for 4 unique values
         var unique = pinArray.filter(onlyUnique);
         if (unique.length !== 4) {
-            alert('Les valeurs des 4 broches doivent être distinctes.');
+            createAlert(16);
             return;
         }
-        var msg = 'fourWireStepperPins/' + board + '/' + pinA + '/' + pinB + '/' + pinC + '/' + pinD + '/' +  stepsPerRev;
+        var msg = 'fourWireStepperPins/' + board + '/' + pinA + '/' + pinB + '/' + pinC + '/' + pinD + '/' + stepsPerRev;
         sendCommand(msg, board, 'fourWireStepperPins');
     };
 
     ext.stepperDriverPins = function (board, pinA, pinB, stepsPerRev) {
 
-        alert('Si vous utilisez une carte Arduino, cette fonction nécessite une version spéciale du programme Firmata.' +
-        'Les détails sur : https://github.com/soundanalogous/AdvancedFirmata');
+        createAlert(15);
 
         var pinArray = [];
         pinArray.push(pinA);
@@ -380,14 +379,14 @@ new (function () {
             console.log('stepperDriverPins unique length =  ' + unique.length);
 
         if (unique.length !== 2) {
-            alert('Les valeurs des broches doivent être distinctes.');
-            return;
+            createAlert(17);
         }
         var msg = 'stepperDriverPins/' + board + '/' + pinA + '/' + pinB + '/' + stepsPerRev;
         sendCommand(msg, board, 'stepperDriverPins');
     };
 
     ext.moveStepper = function (board, pin, rpm, direction, accel, decel, steps) {
+        direction = extractDirection(direction);
         var msg = 'moveStepper/' + board + '/' + pin + '/' + rpm + '/' + direction + '/' + accel + '/' + decel + '/' + steps;
         sendCommand(msg, board, 'moveStepper');
     };
@@ -441,6 +440,7 @@ new (function () {
         // generate a key for sensorDataArray
         var key = genReporterKey(board, pin, 'd');
         var distance = retrieveReporterData(board, pin, key);
+        units = extractDistance(units);
         if (units === 'CM') {
             return (distance * 2.54).toFixed(2);
         }
@@ -457,6 +457,7 @@ new (function () {
         // generate a key for sensorDataArray
         var key = genReporterKey(board, pin, 'a');
         var distance = retrieveReporterData(board, pin, key);
+        units = extractDistance(units);
         if (units === 'CM') {
             return (distance * 2.54).toFixed(2);
         }
@@ -492,8 +493,7 @@ new (function () {
             }
         }
         // did not find an entry in the array
-        alert('Avez-vous correctement activé, sur la carte ' + board + ', la broche ' + pin +
-        '? Aucune déclaration trouvée...');
+        createAlert(18, board, pin);
         ext._shutdown();
     }
 
@@ -544,7 +544,7 @@ new (function () {
             }
         }
         // board was not established
-        alert(type + ' adresse IP de la carte ' + board + ' non définie');
+        createAlert(19, board);
     }
 
     // return unique values contained within an array
@@ -552,47 +552,190 @@ new (function () {
         return self.indexOf(value) === index;
     }
 
-// usage example:
-//    var a = ['a', 1, 'a', 2, '1'];
-//    var unique = a.filter( onlyUnique ); // returns ['a', 1, 2, '1']
+    // strip off the text to accommodate translations
+    function extractOffOn(value) {
+        var offOn = value.split('.');
+        if (offOn[0] === '1') {
+            return "Off"
+        }
+        else {
+            return "On";
+        }
+    }
+
+    function extractDirection(direction) {
+        var dirArray = direction.split('.');
+        if (dirArray[0] === '1') {
+            return "CW";
+        }
+        else {
+            return "CCW";
+        }
+    }
+
+    function extractDistance(distance) {
+        var distArray = distance.split('.');
+        if (distArray[0] === '1') {
+            return "CM";
+        }
+        else {
+            return "Inches";
+        }
+    }
+
+    function extractInversion(inversion) {
+        var invArray = inversion.split('.');
+        if (invArray[0] === '1') {
+            return "False";
+        }
+        else {
+            return "True";
+        }
+    }
+
+    function extractMode(mode) {
+        var modeArray = mode.split('.');
+        var serverMode = undefined;
+        switch (modeArray[0]) {
+            case '1':
+                serverMode = 'Digital Input';
+                break;
+            case '2':
+                serverMode = 'Digital Output';
+                break;
+            case '3':
+                serverMode = 'Analog Sensor Input';
+                break;
+            case '4':
+                serverMode = 'Analog (PWM) Output';
+                break;
+            case '5':
+                serverMode = 'Standard Servo (PWM)';
+                break;
+            case '6':
+                serverMode = 'Continuous Servo (PWM)';
+                break;
+            case '7':
+                serverMode = 'Infrared Distance (GP2Y0A21YK) - (Analog In)';
+                break;
+            case '8':
+                serverMode = 'SONAR Distance - (Digital In)';
+                break;
+            case '9':
+                serverMode = 'Tone (Piezo)- (Digital Out)';
+                break;
+            default:
+                console.log("extract mode unknown mode = " + modeArray[0]);
+        }
+        return serverMode;
+    }
+
+    function createAlert(index, board, pin) {
+        console.log('createAlert' + index, board, pin);
+        var alertStrings = [
+            // 0
+            "dÃ©passe le nombre maximum de broches dÃ©tectÃ© sur la carte.",
+            // 1
+            "ne peut pas Ãªtre configurÃ© avec le mode voulu.",
+            //2
+            "n'est pas configurÃ©e comme une sortie Digital.",
+            //3
+            "n'est pas configurÃ©e comme une sortie Analogique.",
+            //4
+            "n'est pas configurÃ©e comme une sortie Son.",
+            //5
+            "n'est pas configurÃ©e pour commander des servo-moteurs.",
+            //6
+            "n'est pas configurÃ©e pour commander des servo-moteurs standards.",
+            //7
+            "n'est pas configurÃ©e pour commander des servo-moteurs Ã  rotation continue.",
+            //8
+            "n'est pas configurÃ©e pour commander des moteurs pas-Ã -pas.",
+            //9
+            "cette broche est dÃ©jÃ  configurÃ©e, diffÃ©remment.",
+            //10
+            "La vitesse doit Ãªtre rÃ©glÃ©e avec une valeur dans un intervalle de 0,0 Ã  1,0.",
+            //11
+            "ne peut pas effectuer d'opÃ©ration de type analogique.",
+            //12
+            "Une adresse IP existe dÃ©jÃ  pour cette carte.",
+            //13
+            "Si vous utilisez une carte Arduino, cette fonction nÃ©cessite une version spÃ©ciale du programme 'StandardFirmata'." +
+            "Lire la page : https://github.com/rwaldron/johnny-five/wiki/Sonar pour les dÃ©tails.",
+            //14
+            "Une adresse IP doit Ãªtre fixÃ©e avant de pouvoir utiliser la carte.",
+            //15
+            "Si vous utilisez une carte Arduino, cette fonction nÃ©cessite une version spÃ©ciale du programme 'StandardFirmata'." +
+            "Lire la page : https://github.com/soundanalogous/AdvancedFirmata pour les dÃ©tails.",
+            //16
+            "Les 4 valeurs de numÃ©ro de broche doivent Ãªtre uniques. Veuillez recommencer.",
+            //17
+            "Les 2 valeurs de numÃ©ro de broche doivent Ãªtre uniques. Veuillez recommencer.",
+            //18
+            "Le mode de configuration de la broche n'a pas Ã©tÃ© dÃ©fini. ",
+            //19
+            "L'adresse IP de la carte n'a pas encore Ã©tÃ© fixÃ©e.",
+            //20
+            "Le serveur ne rÃ©pond pas. Avez-vous lancÃ© un serveur XiServeur pour cette carte ?" +
+            "Veuillez lancer un serveur Xi et recharger cette page pour essayer Ã  nouveau."
+        ];
+
+        var headerKeywords = {
+            board: "Sur la carte nÂ° ",
+            pin: "la broche "
+        };
+
+        var alertInfo = "";
+        if (board != undefined) {
+            alertInfo = headerKeywords.board + board;
+        }
+        if (pin != undefined) {
+            alertInfo = alertInfo + ' ' + headerKeywords.pin + pin;
+        }
+        alertInfo += " ";
+
+        alert(alertInfo + alertStrings[index]);
+
+    }
+
 
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['w', "utiliser comme carte n° %m.bdNum celle à l'adresse IP / port %s : %s", 'setBoard', '1', 'localhost', '1234'],
-            [' ', 'sur la carte n° %m.bdNum, activer la broche Digital %n en mode %m.pinMode', 'pinMode', '1', '2', 'entrée'],
-            [' ', "sur la carte n° %m.bdNum, mettre l'état logique de la broche Digital %n à %m.onOff ", 'digitalWrite', '1', '2', '0'],
-            [' ', 'sur la carte n° %m.bdNum, écrire sur la broche PWM~ %n la valeur %n', 'analogWrite', '1', '3', '128'],
-            [' ', 'sur la carte n° %m.bdNum, orienter le servo-moteur sur la broche %n de %n degrés - inversé ? %m.inversion',
-                'moveStandardServo', '1', '3', '90', 'faux'],
-            [' ', 'sur la carte n° %m.bdNum, faire tourner le servo-moteur continu sur la broche %n dans la direction %m.motorDirection - inversé ? %m.inversion, à la vitesse (0.0 - 1.0) %n ',
-                'moveContinuousServo', '1', '3', 'avant', 'faux', '.5'],
-            [' ', 'sur la carte n° %m.bdNum, arrêter le servo-moteur de la broche %n !', 'stopServo', '1', '3'],
-            [' ', 'sur la carte n° %m.bdNum, jouer un son sur la broche %n de fréquence (Hz) %n sur une durée (ms) de %n', 'playTone', '1', '3', '1000', '500'],
-            [' ', 'sur la carte n° %m.bdNum, arrêter le son de la broche %n !', 'noTone', '1', '3'],
-            [' ', 'niveau de débogage : %m.dbgLevel', 'setDebugLevel', '0'],
-            ['r', "sur la carte n° %m.bdNum, l'état logique de la broche Digital %n", 'getDigitalInputData', '1', '2'],
-            ['r', 'sur la carte n° %m.bdNum, la valeur lue sur la broche analogique A %n', 'getAnalogSensorData', '1', '2'],
-            ['r', 'sur la carte n° %m.bdNum, la distance mesurée en %m.distance par le capteur Infra-Rouge de la broche %n', 'getInfraredDistanceData', '1', 'cm', '2'],
-            ['r', 'sur la carte n° %m.bdNum, la distance mesurée en %m.distance par le Sonar de la broche %n', 'getSonarData', '1', 'cm', '2'],
-            [' ', 'sur la carte n° %m.bdNum, activer pour un moteur pas-à-pas 4 fils les broches %n   %n   %n   %n avec une rotation de %n pas par tour', 'fourWireStepperPins', '1', '8', '9', '10', '11', '500'],
-            [' ', 'sur la carte n° %m.bdNum, activer la carte de moteur pas-à-pas pour la broche %n, dans la direction %n à raison de %n pas par tour', 'stepperDriverPins', '1', '8', '9', 500],
-            [' ', 'sur la carte n° %m.bdNum, faire tourner le moteur pas-à-pas sur la broche %n : %n tr/mn, direction %m.motorDirection , accélération : %n , décélération : %n pour un nb de pas : %n',
-                'moveStepper', '1', '8', '180', 'avant', '1600', '1600', '2000'],
-            [' ', 'sur la carte n° %m.bdNum, arrêter le moteur pas-à-pas de la broche %n !', 'stopStepper', '1', '8'],
+            ['w', "utiliser comme carte nÂ° %m.bdNum celle Ã  l'adresse IP / port %s : %s", 'setBoard', '1', 'localhost', '1234'],
+            [' ', 'sur la carte nÂ° %m.bdNum, activer la broche Digital %n en mode %m.pinMode', 'pinMode', '1', '2', '1. entrÃ©e'],
+            [' ', "sur la carte nÂ° %m.bdNum, mettre l'Ã©tat logique de la broche Digital %n Ã  %m.onOff ", 'digitalWrite', '1', '2', 'faux / bas'],
+            [' ', 'sur la carte nÂ° %m.bdNum, Ã©crire sur la broche PWM~ %n la valeur %n', 'analogWrite', '1', '3', '128'],
+            [' ', 'sur la carte nÂ° %m.bdNum, orienter le servo-moteur sur la broche %n de %n degrÃ©s - inversÃ© ? %m.inversion',
+                'moveStandardServo', '1', '3', '90', '1. faux'],
+            [' ', 'sur la carte nÂ° %m.bdNum, faire tourner le servo-moteur continu sur la broche %n dans la direction %m.motorDirection - inversÃ© ? %m.inversion, Ã  la vitesse (0.0 - 1.0) %n ',
+                'moveContinuousServo', '1', '3', '1. avant', '1. faux', '.5'],
+            [' ', 'sur la carte nÂ° %m.bdNum, arrÃªter le servo-moteur de la broche %n !', 'stopServo', '1', '3'],
+            [' ', 'sur la carte nÂ° %m.bdNum, jouer un son sur la broche %n de frÃ©quence (Hz) %n sur une durÃ©e (ms) de %n', 'playTone', '1', '3', '1000', '500'],
+            [' ', 'sur la carte nÂ° %m.bdNum, arrÃªter le son de la broche %n !', 'noTone', '1', '3'],
+            [' ', 'niveau de dÃ©bogage : %m.dbgLevel', 'setDebugLevel', '0'],
+            ['r', "sur la carte nÂ° %m.bdNum, l'Ã©tat logique de la broche Digital %n", 'getDigitalInputData', '1', '2'],
+            ['r', 'sur la carte nÂ° %m.bdNum, la valeur lue sur la broche analogique A %n', 'getAnalogSensorData', '1', '2'],
+            ['r', 'sur la carte nÂ° %m.bdNum, la distance mesurÃ©e en %m.distance par le capteur Infra-Rouge de la broche %n', 'getInfraredDistanceData', '1', '1. cm', '2'],
+            ['r', 'sur la carte nÂ° %m.bdNum, la distance mesurÃ©e en %m.distance par le Sonar de la broche %n', 'getSonarData', '1', '1. cm', '2'],
+            [' ', 'sur la carte nÂ° %m.bdNum, activer pour un moteur pas-Ã -pas 4 fils les broches %n   %n   %n   %n avec une rotation de %n pas par tour', 'fourWireStepperPins', '1', '8', '9', '10', '11', '500'],
+            [' ', 'sur la carte nÂ° %m.bdNum, activer la carte de moteur pas-Ã -pas pour la broche %n, dans la direction %n Ã  raison de %n pas par tour', 'stepperDriverPins', '1', '8', '9', 500],
+            [' ', 'sur la carte nÂ° %m.bdNum, faire tourner le moteur pas-Ã -pas sur la broche %n : %n tr/mn, direction %m.motorDirection , accÃ©lÃ©ration : %n , dÃ©cÃ©lÃ©ration : %n pour un nb de pas : %n',
+                'moveStepper', '1', '8', '180', '1. avant', '1600', '1600', '2000'],
+            [' ', 'sur la carte nÂ° %m.bdNum, arrÃªter le moteur pas-Ã -pas de la broche %n !', 'stopStepper', '1', '8']
 
 
         ],
         menus: {
             bdNum: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             dbgLevel: ['0', '1', '2'],
-            onOff: ['0', '1'],
-            pinMode: ['entrée', 'sortie', 'mesure analogique', 'impulsions PWM',
-                'servo-moteur standard (sur PWM)', 'servo-moteur à rotation continue (sur PWM)', 'mesure distance par Infra-Rouge (entrée Analogique)',
-                'mesure distance par Sonar (entrée Digital)', 'sortie Son (sortie Digital)'],
-            motorDirection: ['avant', 'arrière'],
-            inversion: ['faux', 'vrai'],
-            distance: ['cm', 'pouces']
+            onOff: ['1. faux / bas', '2. vrai / haut'],
+            pinMode: ['1. entrÃ©e', '2. sortie', '3. mesure analogique', '4. impulsions PWM~',
+                '5. servo-moteur standard (sur PWM~)', '6. servo-moteur Ã  rotation continue (sur PWM~)', '7. mesure distance par Infra-Rouge (entrÃ©e Analogique)',
+                '8. mesure distance par Sonar (entrÃ©e Digital)', '9. sortie Son (sortie Digital)'],
+            motorDirection: ['1. avant', '2. arriÃ¨re'],
+            inversion: ['1. faux', '2. vrai'],
+            distance: ['1. cm', '2. pouces']
 
         },
 
@@ -601,6 +744,6 @@ new (function () {
 
 
     // Register the extension
-    ScratchExtensions.register('Xi4S_v_002_7Nov14', descriptor, ext);
+    ScratchExtensions.register('Xi4S_v_004_FR_22Nov14', descriptor, ext);
 
 })();

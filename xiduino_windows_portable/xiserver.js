@@ -67,7 +67,7 @@ var five = require('johnny-five');
 
 var board; // a johnny-five 'board'
 
-var xiServerVersion = "XiServeur"
+var xiServerVersion = "XiServer version .004 22 Nov 2014";
 
 var serverType = 'ard'; // set by user in command line invocation
 var urlAddr = 'http://scratch.mit.edu';
@@ -125,7 +125,7 @@ console.log(xiServerVersion);
 // create the correct johnny-five board type
 switch (serverType) {
     case 'rpi':
-        console.log('XiPi Serveur demarre...');
+        console.log('XiPi Server ...');
         var raspi = require('raspi-io');
 
         //noinspection JSCheckFunctionSignatures
@@ -134,7 +134,7 @@ switch (serverType) {
         });
         break;
     case 'bbb':
-        console.log('XiBone Serveur demarre...');
+        console.log('XiBone Server ...');
         var BeagleBone = require('beaglebone-io');
         //noinspection JSCheckFunctionSignatures
         board = new five.Board({
@@ -144,7 +144,7 @@ switch (serverType) {
     case 'ard':
     default:
         serverType = 'ard';
-        console.log('XiDuino Serveur demarre...');
+        console.log('XiDuino Server ...');
 
         // for arduino servers the default web browser is automatically opened to the scratch web page
         if (urlAddr !== "null") {
@@ -399,7 +399,7 @@ board.on('ready', function () {
                     }
                     // validate that this pin was initially set to correct mode
                     if (board.io.pins[msg[2]].mode !== five.Pin.OUTPUT) {
-                        connection.send('invalidPinCommand/' + 2 + '/' + msg[1] + '/' + msg[2]) ;
+                        connection.send('invalidPinCommand/' + 2 + '/' + msg[1] + '/' + msg[2]);
                     }
                     else {
                         if (msg[3] === 'Off') {
@@ -418,7 +418,7 @@ board.on('ready', function () {
                     break;
                 // write out the analog value to the PWM pin
                 case 'analogWrite':
-                    pin = msg[2] ;
+                    pin = msg[2];
                     if (debugLevel >= 3) {
                         console.log('analogWrite current mode === ' + board.io.pins[msg[2]].mode);
                         console.log('pin = ' + pin);
@@ -426,7 +426,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[msg[2]].mode !== five.Pin.PWM) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 3 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 3 + '/' + msg[1] + '/' + pin);
                     }
                     else {
                         board.analogWrite(msg[2], msg[3]);
@@ -445,7 +445,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== five.Pin.OUTPUT) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 4 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 4 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -489,7 +489,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== five.Pin.SERVO) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -497,7 +497,7 @@ board.on('ready', function () {
                         for (var i = 0; i < servoArray.length; i++) {
                             if (servoArray[i].pin === pin) {
                                 if (servoArray[i].type !== "standard") {
-                                    connection.send('invalidPinCommand/' + 6 + '/' + msg[1] + '/' + pin) ;
+                                    connection.send('invalidPinCommand/' + 6 + '/' + msg[1] + '/' + pin);
                                     return;
                                 }
                                 servoArray[i].isInverted = inverted !== 'False';
@@ -525,7 +525,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== five.Pin.SERVO) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -534,7 +534,7 @@ board.on('ready', function () {
                         for (i = 0; i < servoArray.length; i++) {
                             if (servoArray[i].pin === pin) {
                                 if (servoArray[i].type !== "continuous") {
-                                    connection.send('invalidPinCommand/' + 7 + '/' + msg[1] + '/' + pin) ;
+                                    connection.send('invalidPinCommand/' + 7 + '/' + msg[1] + '/' + pin);
                                     return;
                                 }
 
@@ -570,7 +570,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== five.Pin.SERVO) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 5 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -611,7 +611,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== board.io.MODES.STEPPER) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 8 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 8 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -650,7 +650,7 @@ board.on('ready', function () {
                     }
                     if (board.io.pins[pin].mode !== board.io.MODES.STEPPER) {
                         // send alert string
-                        connection.send('invalidPinCommand/' + 8 + '/' + msg[1] + '/' + pin) ;
+                        connection.send('invalidPinCommand/' + 8 + '/' + msg[1] + '/' + pin);
                         break;
                     }
                     else {
@@ -913,7 +913,7 @@ board.on('ready', function () {
                     return true
                 }
                 else {
-                    connection.send('invalidSetMode/' + 9 + '/' +  boardID + '/' + pin );
+                    connection.send('invalidSetMode/' + 9 + '/' + boardID + '/' + pin);
                     return false;
                 }
         }
@@ -935,7 +935,7 @@ board.on('ready', function () {
         }
 
         // alert pin does not support mode
-        connection.send('invalidSetMode/' + 1 + '/' +  boardID + '/' + pin );
+        connection.send('invalidSetMode/' + 1 + '/' + boardID + '/' + pin);
         return false;
     }
 
@@ -948,7 +948,7 @@ board.on('ready', function () {
         var analogPin;
 
         if (pin > board.io.analogPins.length) {
-            connection.send('invalidSetMode/' + 0 + '/' +  boardID + '/' + pin );
+            connection.send('invalidSetMode/' + 0 + '/' + boardID + '/' + pin);
             return false;
         }
 
@@ -962,7 +962,7 @@ board.on('ready', function () {
             }
         }
         if (pinMapped === false) {
-            connection.send('invalidSetMode/' + 11 + '/' +  boardID + '/' + pin );
+            connection.send('invalidSetMode/' + 11 + '/' + boardID + '/' + pin);
             return false;
         }
 
